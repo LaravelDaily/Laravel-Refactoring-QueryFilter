@@ -73,12 +73,12 @@ class UserSearchQueryTest extends TestCase
 
     public function testfiltersByName()
     {
-        $query    = ['name' => 'Young'];
-        $response = $this->get(route('users.index', $query));
+        $query    = ['filter[name]' => 'Young'];
+        $response = $this->getJson(route('users.index', $query));
 
         $response->assertOk();
         $response->assertViewHas('users', function (LengthAwarePaginator $users) use ($query) {
-            $hasSearchString = Str::contains(optional($users->first())->name, $query['name']);
+            $hasSearchString = Str::contains(optional($users->first())->name, $query['filter[name]']);
             $isTotalCorrect = $users->total() === 2;
 
             return $hasSearchString && $isTotalCorrect;
@@ -87,12 +87,12 @@ class UserSearchQueryTest extends TestCase
 
     public function testFiltersByAbout()
     {
-        $query    = ['about' => 'nice'];
-        $response = $this->get(route('users.index', $query));
+        $query    = ['filter[about]' => 'nice'];
+        $response = $this->getJson(route('users.index', $query));
 
         $response->assertOk();
         $response->assertViewHas('users', function (LengthAwarePaginator $users) use ($query) {
-            $hasSearchString = Str::contains(optional($users->first())->about, $query['about']);
+            $hasSearchString = Str::contains(optional($users->first())->about, $query['filter[about]']);
             $isTotalCorrect = $users->total() === 2;
 
             return $hasSearchString && $isTotalCorrect;
@@ -101,12 +101,12 @@ class UserSearchQueryTest extends TestCase
 
     public function testFiltersByCountry()
     {
-        $query    = ['country' => 'au'];
-        $response = $this->get(route('users.index', $query));
+        $query    = ['filter[country]' => 'au'];
+        $response = $this->getJson(route('users.index', $query));
 
         $response->assertOk();
         $response->assertViewHas('users', function (LengthAwarePaginator $users) use ($query) {
-            $hasSearchString = optional($users->first())->country->short_code === $query['country'];
+            $hasSearchString = optional($users->first())->country->short_code === $query['filter[country]'];
             $isTotalCorrect = $users->total() === 3;
 
             return $hasSearchString && $isTotalCorrect;
@@ -115,8 +115,8 @@ class UserSearchQueryTest extends TestCase
 
     public function testFiltersByRegisteredFrom()
     {
-        $query    = ['registered_from' => '2021-11-15'];
-        $response = $this->get(route('users.index', $query));
+        $query    = ['filter[registered_from]' => '2021-11-15'];
+        $response = $this->getJson(route('users.index', $query));
 
         $response->assertOk();
         $response->assertViewHas('users', function (LengthAwarePaginator $users) {
@@ -126,8 +126,8 @@ class UserSearchQueryTest extends TestCase
 
     public function testFiltersByRegisteredTo()
     {
-        $query    = ['registered_to' => '2021-11-15'];
-        $response = $this->get(route('users.index', $query));
+        $query    = ['filter[registered_to]' => '2021-11-15'];
+        $response = $this->getJson(route('users.index', $query));
 
         $response->assertOk();
         $response->assertViewHas('users', function (LengthAwarePaginator $users) {
@@ -138,10 +138,10 @@ class UserSearchQueryTest extends TestCase
     public function testFiltersByRegisteredRange()
     {
         $query = [
-            'registered_from' => '2021-11-12',
-            'registered_to'   => '2021-11-13',
+            'filter[registered_from]' => '2021-11-12',
+            'filter[registered_to]'   => '2021-11-13',
         ];
-        $response = $this->get(route('users.index', $query));
+        $response = $this->getJson(route('users.index', $query));
 
         $response->assertOk();
         $response->assertViewHas('users', function (LengthAwarePaginator $users) {
@@ -152,15 +152,15 @@ class UserSearchQueryTest extends TestCase
     public function testFiltersByNameAndCountry()
     {
         $query = [
-            'name'    => 'Louis',
-            'country' => 'lt',
+            'filter[name]'    => 'Louis',
+            'filter[country]' => 'lt',
         ];
-        $response = $this->get(route('users.index', $query));
+        $response = $this->getJson(route('users.index', $query));
 
         $response->assertOk();
         $response->assertViewHas('users', function (LengthAwarePaginator $users) use ($query) {
-            $hasRightName = Str::contains(optional($users->first())->name, $query['name']);
-            $hasRightCountry = optional($users->first())->country->short_code === $query['country'];
+            $hasRightName = Str::contains(optional($users->first())->name, $query['filter[name]']);
+            $hasRightCountry = optional($users->first())->country->short_code === $query['filter[country]'];
             $isTotalCorrect = $users->total() === 2;
 
             return $hasRightName && $hasRightCountry && $isTotalCorrect;
@@ -170,15 +170,15 @@ class UserSearchQueryTest extends TestCase
     public function testFiltersByAboutAndRegisteredDate()
     {
         $query = [
-            'registered_from' => '2021-11-13',
-            'registered_to'   => '2021-11-16',
-            'about'           => 'nice',
+            'filter[registered_from]' => '2021-11-13',
+            'filter[registered_to]'   => '2021-11-16',
+            'filter[about]'           => 'nice',
         ];
-        $response = $this->get(route('users.index', $query));
+        $response = $this->getJson(route('users.index', $query));
 
         $response->assertOk();
         $response->assertViewHas('users', function (LengthAwarePaginator $users) use ($query) {
-            $hasSearchString = Str::contains(optional($users->first())->about, $query['about']);
+            $hasSearchString = Str::contains(optional($users->first())->about, $query['filter[about]']);
 
             return $hasSearchString && $users->total() === 1;
         });
@@ -187,19 +187,19 @@ class UserSearchQueryTest extends TestCase
     public function testFiltersByAll()
     {
         $query = [
-            'name'            => 'Mr.',
-            'about'           => 'laravel',
-            'country'         => 'us',
-            'registered_from' => '2021-11-14',
-            'registered_to'   => '2021-11-18',
+            'filter[name]'            => 'Mr.',
+            'filter[about]'           => 'laravel',
+            'filter[country]'         => 'us',
+            'filter[registered_from]' => '2021-11-14',
+            'filter[registered_to]'   => '2021-11-18',
         ];
-        $response = $this->get(route('users.index', $query));
+        $response = $this->getJson(route('users.index', $query));
 
         $response->assertOk();
         $response->assertViewHas('users', function (LengthAwarePaginator $users) use ($query) {
-            $hasRightName = Str::contains(optional($users->first())->name, $query['name']);
-            $hasRightAboutSection = Str::contains(optional($users->first())->about, $query['about']);
-            $hasRightCountry = optional($users->first())->country->short_code === $query['country'];
+            $hasRightName = Str::contains(optional($users->first())->name, $query['filter[name]']);
+            $hasRightAboutSection = Str::contains(optional($users->first())->about, $query['filter[about]']);
+            $hasRightCountry = optional($users->first())->country->short_code === $query['filter[country]'];
             $isTotalCorrect = $users->total() === 2;
 
             return $hasRightName && $hasRightAboutSection && $hasRightCountry && $isTotalCorrect;

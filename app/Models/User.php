@@ -52,4 +52,21 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Country::class);
     }
+
+    public function scopeCountry($query, $short_code)
+    {
+        return $query->whereHas('country', function ($query) use ($short_code) {
+            $query->where('short_code', $short_code);
+        });
+    }
+
+    public function scopeRegisteredFrom($query, $date)
+    {
+        return $query->whereDate('created_at', '>=', $date);
+    }
+
+    public function scopeRegisteredTo($query, $date)
+    {
+        return $query->whereDate('created_at', '<=', $date);
+    }
 }

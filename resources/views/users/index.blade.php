@@ -17,19 +17,19 @@
                             <div>
                                 <x-label for="name" :value="__('Name')" />
 
-                                <x-input id="name" name="name" type="text" :value="request()->input('name')" class="block mt-1 w-full" />
+                                <x-input id="name" name="filter[name]" type="text" :value="request()->input('name')" class="block mt-1 w-full" />
                             </div>
 
                             <div class="mt-4">
                                 <x-label for="about" :value="__('About')" />
 
-                                <x-input id="about" name="about" type="text" :value="request()->input('about')" class="block mt-1 w-full" />
+                                <x-input id="about" name="filter[about]" type="text" :value="request()->input('about')" class="block mt-1 w-full" />
                             </div>
 
                             <div class="mt-4">
                                 <x-label for="country" :value="__('Country')" />
 
-                                <select id="country" name="country" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full">
+                                <select id="country" name="filter[country]" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 block mt-1 w-full">
                                     <option value="">--- Any ---</option>
                                     @foreach ($countries as $country)
                                         <option value="{{ $country->short_code }}" {{ request()->input('country') === $country->short_code ? 'selected' : '' }}>
@@ -47,12 +47,12 @@
                                     <div class="flex-grow">
                                         <x-label for="registered_from" :value="__('From')"></x-label>
 
-                                        <x-input id="registered_from" name="registered_from" type="text" :value="request()->input('registered_from')" class="block mt-1 w-full"></x-input>
+                                        <x-input id="registered_from" name="filter[registered_from]" type="text" :value="request()->input('registered_from')" class="block mt-1 w-full"></x-input>
                                     </div>
                                     <div class="flex-grow">
                                         <x-label for="registered_to" :value="__('To')"></x-label>
 
-                                        <x-input id="registered_to" name="registered_to" type="text" :value="request()->input('registered_to')" class="block mt-1 w-full"></x-input>
+                                        <x-input id="registered_to" name="filter[registered_to]" type="text" :value="request()->input('registered_to')" class="block mt-1 w-full"></x-input>
                                     </div>
 
                                 </div>
