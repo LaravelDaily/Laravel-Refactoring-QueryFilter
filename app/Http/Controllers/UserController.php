@@ -9,31 +9,26 @@ class UserController extends Controller
 {
     public function index()
     {
-        $query = User::query();
-
-        if (request()->filled('name')) {
-            $query->where('name', 'LIKE', '%' . request('name') . '%');
-        }
-
-        if (request()->filled('about')) {
-            $query->where('about', 'LIKE', '%' . request('about') . '%');
-        }
-
-        if (request()->filled('country')) {
-            $query->whereHas('country', function ($query) {
-                $query->where('short_code', request('country'));
-            });
-        }
-
-        if (request()->filled('registered_from')) {
-            $query->whereDate('created_at', '>=', request('registered_from'));
-        }
-
-        if (request()->filled('registered_to')) {
-            $query->whereDate('created_at', '<=', request('registered_to'));
-        }
-
-        $users = $query->with('country')->paginate()->withQueryString();
+        $users = User::with('country')
+            ->when(request()->filled('name'), function ($query) {
+                $query->where('name', 'LIKE', '%' . request('name') . '%');
+            })
+            ->when(request()->filled('about'), function($query) {
+                $query->where('about', 'LIKE', '%' . request('about') . '%');
+            })
+            ->when(request()->filled('country'), function($query) {
+                $query->whereHas('country', function ($query) {
+                    $query->where('short_code', request('country'));
+                });
+            })
+            ->when(request()->filled('registered_from'), function($query) {
+                $query->whereDate('created_at', '>=', request('registered_from'));
+            })
+            ->when(request()->filled('registered_to'), function($query) {
+                $query->whereDate('created_at', '<=', request('registered_to'));
+            })
+            ->paginate()
+            ->withQueryString();
 
         $countries = Country::get(['name', 'short_code']);
 
